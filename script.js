@@ -23,7 +23,7 @@
 
     down.addEventListener('click', () => {
       const next = node.nextElementSibling;
-      if (next) list.insertBefore(next, node); // swap with next -> "move down"
+      if (next) list.insertBefore(next, node);
     });
 
     del.addEventListener('click', () => {
@@ -33,20 +33,24 @@
     return node;
   }
 
-  addBtn.addEventListener('click', () => {
+  addBtn?.addEventListener('click', () => {
     list.appendChild(createRow());
   });
 
-  saveBtn.addEventListener('click', () => {
-    const rows = Array.from(list.children);
-    const entries = rows.map(r => {
+  function buildOrderedJsonText(rows){
+    const parts = [];
+    for (const r of rows){
       const k = r.querySelector('.name').value;
       const v = r.querySelector('.value').value;
-      return [k, v];
-    });
-    const obj = Object.fromEntries(entries);
-    result.textContent = JSON.stringify(obj, null, 0);
+      parts.push(String(JSON.stringify(k)) + ':' + String(JSON.stringify(v)));
+    }
+    return '{' + parts.join(',') + '}';
+  }
+
+  saveBtn?.addEventListener('click', () => {
+    const rows = Array.from(list.children);
+    result.textContent = buildOrderedJsonText(rows);
   });
 
-  list.appendChild(createRow());
+  if (list && tpl) list.appendChild(createRow());
 })();
